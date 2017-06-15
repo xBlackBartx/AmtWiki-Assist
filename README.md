@@ -12,6 +12,7 @@ On the command line it will tell you <br>
   the username of the editor<br>
   how many edits have been made on this page<br>
 It will then ask if this is a spammer.<br>
+
 Appropriate answers are:<br>
   y or Y if the user is a spammer.<br>
   s or S to skip this page (To allow manual approvals)<br>
