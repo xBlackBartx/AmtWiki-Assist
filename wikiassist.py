@@ -213,6 +213,14 @@ class Web:
                     pl.click()
                 except NoSuchElementException:
                     try:
+                        #  TODO this is the function to see if the post is more than 6 months old, to break out of loops
+                        #  TODO It is still untested at this point.
+                        revision_text = self.driver.find_element_by_id('mw-diff-ntitle1').find_element_by_tag_name('a').text
+                        revision_date = time.strptime(' '.join(revision_text.split(' ')[-3:]),"%d %B %Y")
+                        current_date = time.time()
+                        time_difference = ((current_date[0] - revision_date[0]) * 12) + (current_date[1] - revision_date[1])
+                        if time_difference > 6:
+                            break
                         prev = self.driver.find_element_by_id('differences-prevlink')
                         prev.click()
                         wait_for(prev, link_has_gone_stale)
