@@ -74,6 +74,7 @@ class Web:
         self.driver.get('http://amtwiki.net/amtwiki/index.php?title=Special:RecentChanges&hidepatrolled=1')
 
     def get_posts(self, rescan=False):
+        #TODO  scan all posts on first run.
         if rescan:
             self.post_list = []
             self.driver.get('http://amtwiki.net/amtwiki/index.php?title=Special:RecentChanges&hidepatrolled=1')
@@ -131,6 +132,8 @@ class Web:
         except TimeoutException:
             print("Error, block page timed out")
             self.exit_program()
+        if 'is already blocked. Do you want to change the settings?' in self.driver.page_source:
+            return
         self.driver.find_element_by_id('mw-input-wpExpiry').send_keys('i')
         self.driver.find_element_by_id('mw-input-wpReason').send_keys('b')
         self.driver.find_element_by_class_name('mw-htmlform-submit').click()
@@ -217,8 +220,11 @@ class Web:
                         #  TODO It is still untested at this point.
                         revision_text = self.driver.find_element_by_id('mw-diff-ntitle1').find_element_by_tag_name('a').text
                         revision_date = time.strptime(' '.join(revision_text.split(' ')[-3:]),"%d %B %Y")
-                        current_date = time.time()
-                        time_difference = ((current_date[0] - revision_date[0]) * 12) + (current_date[1] - revision_date[1])
+                        current_date = time.localtime()
+                        try:
+                            time_difference = ((current_date[0] - revision_date[0]) * 12) + (current_date[1] - revision_date[1])
+                        except TypeError:
+                            print(current_date, revision_date)
                         if time_difference > 6:
                             break
                         prev = self.driver.find_element_by_id('differences-prevlink')
@@ -278,6 +284,7 @@ class Web:
             self.exit_program()
 
     def exit_program(self):
+        print('Exiting program')
         self.driver.quit()
         exit()
 
